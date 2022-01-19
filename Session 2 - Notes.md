@@ -351,13 +351,22 @@ al sistema operativo.
 
 	-- ... Active: inactive (dead) since Wed 2022-01-19 19:34:20 UTC; ...
 
+## 7. Reiniciar el Servicio
 
-## 7. Recargar el Servicio (reload)
+A diferencia de `reload` el reiniciar implica detener
+y volver a iniciar. O sólo iniciar si estaba detenido.
+
+	$ sudo systemctl restart nginx-abc.service
+
+## 8. Recargar el Servicio (reload)
 
 Para mandar la señal `nginx -s reload` podemos usar el 
 `systemctl`.
 
 	$ sudo systemctl reload nginx-abc.service
+
+* **NOTA:** La recarga no afecta a los usuarios, es
+una recarga en vivo, sin pausar el servidor.
 
 
 
