@@ -1,4 +1,4 @@
-# Curso de Nginx
+# Administración de Nginx Web Server
 
 ![Nginx | High Performance Consulting Group | Inventor's House](./screenshots/logo.png)
 
