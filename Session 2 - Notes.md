@@ -345,20 +345,20 @@ al sistema operativo.
 : Started Nginx Ambient ABS /ABS/nginx-abs.
 ```
 
-## 6. Detener el Servicio
+## 7. Detener el Servicio
 
 	$ sudo systemctl stop nginx-abc.service
 
 	-- ... Active: inactive (dead) since Wed 2022-01-19 19:34:20 UTC; ...
 
-## 7. Reiniciar el Servicio
+## 8. Reiniciar el Servicio
 
 A diferencia de `reload` el reiniciar implica detener
 y volver a iniciar. O sólo iniciar si estaba detenido.
 
 	$ sudo systemctl restart nginx-abc.service
 
-## 8. Recargar el Servicio (reload)
+## 9. Recargar el Servicio (reload)
 
 Para mandar la señal `nginx -s reload` podemos usar el 
 `systemctl`.
