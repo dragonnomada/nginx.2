@@ -162,6 +162,131 @@ built by gcc 9.3.0 (Ubuntu 9.3.0-17ubuntu1~20.04)
 configure arguments: --prefix=/ABC/nginx-abc --build=2022.01.001 --builddir=2022.01.001 --user=ubuntu --group=ubuntu
 ```
 
+## Conclusión
+
+Hasta ahora hemos instalado un ambiente personalizado
+de Nginx, configurado de forma que, están activos
+los módulos y configuraciones que necesitamos.
+
+Entonces ya podemos utilizar nuestro ambiente aislado
+de Nginx y darle mantenimiento.
+
+De ser necesario podríamos repetir los pasos para
+crear nuevos ambientes o reemplazarlos. Por ejemplo,
+volver a compilarlo con nuevas caracterizticas
+como nuevos módulos o cambiar el usuario.
+
+---
+
+# Sesión 2 - Encender y Apagar el Ambiente Nginx
+
+Ubicación | Descripción
+--- | ---
+`conf` | Contiene las configuraciones por defecto, especificamente `nginx.conf`.
+`html` | No está enlazada a la configuración global, pero es un buen lugar donde Nginx buscará los archivos por defecto.
+`logs` | Se generarán los archivos `access.log` y `error.log`.
+`sbin` | En esta carpeta se encuentra el binario principal (el `nginx`).
+
+## 1. Encender el Ambiente de Nginx (manual)
+
+Para prender el ambiente manualmente debemos ejecutar
+el binario `nginx`.
+
+	# Forma no recomendada
+
+	$ cd <path>/sbin
+	
+	$ ./nginx
+
+	# Forma recomendada:
+
+	$ /ABC/nginx-abc/sbin/nginx
+
+## 2. Verficar que el ambiente esté prendido
+
+	$ ps ax | grep nginx
+
+## 3. Detener el proceso de Nginx
+
+	# 1. Mediante el PID del Master Process
+
+	$ sudo kill 128382
+
+## 4. Verficar que el ambiente esté apagado
+
+	$ ps ax | grep nginx
+
+## 5. Detener todos los procesos de nginx
+
+	$ sudo killall nginx
+
+## 6. Verficar que el ambiente por usuario
+
+	$ ps -ef | grep nginx
+
+## 7. Consultar el PID del ambiente `<prefix>/logs/nginx.pid`
+
+	$ cat nginx.pid
+
+## 8. Detener el proceso de Nginx
+
+	# 2. Directamente del PID del ambiente
+
+	$ sudo kill $(cat /ABC/nginx-abs/logs/nginx.pid)
+
+## 9. Crear un alias para nuestro ejecutable de nginx
+
+	$ alias nginx-abc="/ABC/nginx-abc/sbin/nginx"
+
+	# Si lo queremos permanente de sessión
+
+	$ nano ~/.bashrc
+
+```
+...
+# Nginx Ambients Alias
+
+alias nginx-abc="/ABS/nginx-abs/sbin/nginx"
+```
+
+## 10. Detener el proceso de Nginx mediante señales
+
+	# 3. Mediante señales stop/quit
+
+	# Detención Rápida (forzada)
+	
+	$ nginx-abc -s stop
+
+	# Detención Amigable
+
+	# nginx-abc -s quit
+
+### Tabla de señales
+
+`stop` | Detiene a Nginx rápidamente en forma forzada.
+`quit` | Detiene a Nginx de forma pasiva (con espera).
+`reopen` | Vuelve a abrir los archivos de logs.
+`reload` | Vuelve a cargar las configuraciones (actualizar).
+
+## 11. Comprobar que las configuraciones sea correctas
+
+	$ nginx-abc -t
+
+	-- ... ok ... successful
+
+## 12. Recargar nuevas configuraciones
+
+	$ nginx-abc -s reload
+
+
+
+
+
+
+
+
+
+
 
 
 
