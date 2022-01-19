@@ -206,7 +206,7 @@ el binario `nginx`.
 
 	$ ps ax | grep nginx
 
-## 3. Detener el proceso de Nginx
+## 3. Detener el proceso de Nginx por PID
 
 	# 1. Mediante el PID del Master Process
 
