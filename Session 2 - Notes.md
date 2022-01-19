@@ -278,7 +278,86 @@ alias nginx-abc="/ABS/nginx-abs/sbin/nginx"
 
 	$ nginx-abc -s reload
 
+---
 
+# Sesión 2 - Configuración de los Ambientes Nginx como Servicios
+
+## 1. Crear una unidad de Servicio
+
+	$ sudo nano /usr/lib/systemd/system/nginx-abc.service
+
+```
+[Unit]
+Description=Nginx Ambient ABC /ABC/nginx-abc
+Documentation=man:nginx(8)
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/ABC/nginx-abc/logs/nginx.pid
+ExecStartPre=/ABC/nginx-abc/sbin/nginx -t
+ExecStart=/ABC/nginx-abc/sbin/nginx
+ExecReload=/ABC/nginx-abc/sbin/nginx -s reload
+ExecStop=/ABC/nginx-abc/sbin/nginx -s stop
+
+[Install]
+WantedBy=multi-user.target
+```
+
+## 2. Habilitar el Servicio
+
+Al habilitar un servicio, este estará disponible cada
+que el sistema arraque. Si el servicio se desactiva
+y por ejemplo el servidor se reinicia por algún motivo
+no se levantará el servicio automáticamente. Es decir,
+sólo aquellos servicios activos serán iniciados junto
+al sistema operativo.
+
+	$ sudo systemctl enable nginx-abc.service
+
+## 3. Deshabilitar el Servicio
+
+	$ sudo systemctl disable nginx-abc.service
+
+## 4. Verificar el estatus del Servicio (apagado)
+
+	$ sudo systemctl status nginx-abc.service
+
+## 5. Encender el Servicio
+
+	$ sudo systemctl start nginx-abc.service
+
+## 6. Verificar el estatus del Servicio (encendido)
+
+	$ sudo systemctl status nginx-abc.service
+
+	-- ... Active: active (running) ...
+	-- ... Main PID: 130634 (nginx) ...
+	-- ... 130634 nginx: master process /ABS/nginx-abs/sbin/nginx ...
+	
+### Info
+
+```
+: Starting Nginx Ambient ABS /ABS/nginx-abs...
+: nginx: the configuration file /ABS/nginx-abs/conf/ngin>
+: nginx: configuration file /ABS/nginx-abs/conf/nginx.co>
+: nginx-abs.service: Failed to parse PID from file /ABS/ngi>
+: Started Nginx Ambient ABS /ABS/nginx-abs.
+```
+
+## 6. Detener el Servicio
+
+	$ sudo systemctl stop nginx-abc.service
+
+	-- ... Active: inactive (dead) since Wed 2022-01-19 19:34:20 UTC; ...
+
+
+## 7. Recargar el Servicio (reload)
+
+Para mandar la señal `nginx -s reload` podemos usar el 
+`systemctl`.
+
+	$ sudo systemctl reload nginx-abc.service
 
 
 
