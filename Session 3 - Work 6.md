@@ -32,3 +32,11 @@ server {
 ## 3. Recargar la configuración del servidor
 
 	$ sudo systemctl reload nginx-xyz
+
+## 4. Genera algunos archivos de prueba
+
+	$ echo "<h1>Index</h1>" > /XYZ/www/index.html
+
+	$ echo "<h1>About</h1>" > /XYZ/docs/about.html
+
+	$ touch > /XYZ/pictures/img/logo.png
