@@ -1,0 +1,11 @@
+Sesión 3. Checkpoint
+
+1. `nginx-xyz/`                                     -> Nginx 1.21.5
+2. `sites/server_12345.conf`                        -> server { listen 12345; }
+3. `ports.txt`                                      -> 12345 - 78901
+4. `sources/`                                       -> nginx-1.21.5.tar.gz nginx-1.21.5/
+5. `nginx-xyz/conf/nginx.conf`                      -> include sites-enabled/*;
+6. `nginx-xyz/conf/sites-enabled/server_12345.conf` -> ln -s /XYZ/sites//server_12345.conf
+
+
+

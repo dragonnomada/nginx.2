@@ -220,9 +220,85 @@ a la carpeta `conf/sites-enabled`.
 
 	$ ln -s /ABC/sites/server_n.conf /ABC/nginx-abc/conf/sites-enabled/
 
+---
 
+# Sesión 3. Crear un servidor de Recursos
 
+## 1. Establecer rutas/ubicaciones (location) como recursos
 
+En Nginx todas peticiones se pueden trabajar como rutas
+($uri) que contienen la información del recurso que se
+desea obtener.
+
+Para devolver recursos estáticos sobre alguna carpeta
+podemos usar la directiva `root` y especificar la
+carpeta raíz que será usada sobre los recursos solicitados.
+Generalmente esta carpeta se llama `html` o `www`.
+
+Por defecto Nginx usa la carpeta `<ambient>/html`. Sin
+embargo, la directiva `root` nos permite cambiarla.
+
+> Sintaxis de la directiva `root`
+
+```
+root <path>;
+```
+
+* **NOTA:** `root` establece el directorio usado
+para extrar los recursos al nivel que se encuentre.
+
+Lo más común es usar `root` a nivel `location` para
+establecer la ruta de cada petición posible.
+
+Así podemos garantizar seguridad y separabilidad de 
+recursos. Algunos podrían ser recursos genéricos
+y otros privados o reservados.
+
+> Sintaxis de la directiva `location`
+
+```
+server {
+
+	location <uri> {
+		<Reglas | Directivas>
+	}
+
+	location <uri 2> {
+		<Reglas | Directivas>
+	}
+
+	location <uri 3> {
+		<Reglas | Directivas>
+	}
+
+	...
+
+}
+```
+
+### Un servidor de recursos estáticos
+
+> `server_n.conf`
+
+```
+server {
+
+	listen 12345;
+
+	location / {
+		root /XYZ/www; # /XYZ/www/...
+	}
+
+	location /about.html {
+		root /XYZ/docs; # /XYZ/docs/about.html
+	}
+
+	location /img {
+		root /XYZ/pictures; # /XYZ/pictures/img/...
+	}
+
+}
+```
 
 
 
