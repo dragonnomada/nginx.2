@@ -286,7 +286,37 @@ location /products {
 * **NOTA:** No se debe olvidar el modo `last`.
 
 
+# Sesión 4. Autenticación Basica (usuario/contraseña)
 
+Algunas veces vamos a requerir una autenticación básica para
+proteger nuestras rutas y a través de `htpasswd` instalado mediante
+`sudo apt install apache2-utils`. Podemos crear archivos de autenticación
+básica mediante usuario y contraseña.
+
+## 1. Generar un archivo de credenciales
+
+	$ htpasswd -c /XYZ/security/credenciales1 user1
+
+	--> New password: ***
+
+## 2. Podríamos agregar más usuarios a las credenciales
+
+	$ htpasswd /XYZ/security/credenciales1 user2
+
+	--> New password: ***
+
+## 3. Utilizar la directiva `auth_basic` para habilitar la autenticación
+
+```
+location / {
+	auth_basic "Ruta protegida";
+	auth_basic_user_file /XYZ/security/credentiales1;
+
+	root /XYZ/www;
+}
+```
+
+[https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-http-basic-authentication/](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-http-basic-authentication/)
 
 
 
