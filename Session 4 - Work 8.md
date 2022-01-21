@@ -24,7 +24,7 @@ location /certificado {
 
 ### 3. Verificar el funcionamiento
 
-	$curl localhost:12345/certificado?id=1234
+	$curl localhost:12345/certificado/?id=1234
 
 ### Notas
 

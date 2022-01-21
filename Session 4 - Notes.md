@@ -185,6 +185,109 @@ Comandos | Descripción
 <p>QUERY PAGE: <!--#echo var="page" default="0" ---></p>
 ```
 
+---
+
+# Sesión 4. Reescribir rutas y Expresiones Regulares
+
+Es común querer reescribir una ruta por otra en los siguientes casos
+particulares.
+
+1. **La ruta tiene un formato más sencillo que el objetivo**. Ejemplo 
+`/products/123/info`, pero la real `/products.php?id=123&mode=info`.
+2. **La ruta está internacionalizada**. Ejemplo 
+`/en/about` -> `/about.php?lang=en`, `/es/acerca` -> `/about.php?lang=es`.
+3. **La ruta consume recursos internos o privados**. Ejemplo
+`/videos/project/xyz/123456` -> `/v/p/xyz--123456.mp4` (interna)
+
+En Nginx contamos con la directiva `rewrite` que nos permitirá
+reescribir rutas en otras. Con la ventaja de utilizar las
+expresiones regurales para extraer datos de la ruta. Por ejemplo,
+extraer el nombre del proyecto y el código de vídeo (en el último
+caso particular).
+
+Nginx utiliza un sistema de expresiones regulares compatibles con Perl
+(PCRE - Perl Compatible Regular Expressions) [https://www.pcre.org/](https://www.pcre.org/)
+
+### Tabla de Expresiones Regulares
+
+Token | Descripción
+--- | ---
+`/about` | Coincide todas las rutas que contienen con `/about`. `/en</about>/...`
+`hello` | Coincide todos los caracteres `h e l l o` en ese esa secuencia con la url. `/utils/<hello>/...`
+`^` | **Comienzo**. `^/about`, sólo coinciden las rutas que comienzan con `/about`
+`$` | **Finaliza**. `html$`, sólo coincide sí la ruta termina en html, `/en/about/privacy.html`
+`()` | **Captura**. `/products/(.*)/info`, captura la parte encerrada que coincida.
+`.*` | **Todos los símbolos**. `.*hello`, todos los caracteres antes de `hello`.
+
+### Reescritura de Rutas
+
+> Sintaxis de la declativa `rewrite`
+
+```
+# Sustituye la ruta por el código HTTP (200 OK | 401 UNATHORIZED | 403 FORBIDDEN | 500 INTERNAL SERVER ERROR | 501 ...)
+return <code> [<message>];
+
+# Sustituye la ruta original por otra ruta objetivo (internamente).
+rewrite <source> <target> <mode>;
+```
+
+[http://nginx.org/en/docs/http/ngx_http_rewrite_module.html](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html)
+
+### Modos de Reescritura de Rutas
+
+Modo | Descripción
+--- | ---
+`last` | Reescribe la ruta y finaliza la ubicación (original)
+`break` | Reescribe la ruta y rompe una posible condición, para continuar en la ubicación (original)
+`redirect` | Redirige la ruta original a la objetivo (con efecto en el cliente).
+`permanent` | Devuelve el código HTTP `301` indicando que la ruta ya no existe porque se movió (con efecto en el cliente).
+
+* **NOTA:** El modo más utilizado es `last`. No especificar el modo o usar
+otro, podría tener resultados no deseos.
+
+### Caso Práctico: Productos Dinámicos
+
+Supongamos que la ruta `/product-info.shtml?id=123` nos devuelve la información del
+producto especificado mediante el parámetro query `id`.
+
+Sin embargo, no es nuestro deseo exponer tal ruta. Sino, que el cliente
+debería solicitar la ruta `/products/123/info`.
+
+Entonces tenemos que reescribir la ruta `/products/123/info` hacia la ruta
+`/product-info.shtml?id=123`.
+
+> 1. Crear la ubicación final/objetivo (`target`)
+
+```
+root /XYZ/products;
+
+# /XYZ/products/product-info.shtml
+location /product-info.shtml {
+	ssi on;
+}
+```
+
+> /XYZ/products/product-info.shtml
+
+```
+<h1>Información del Producto</h1>
+
+<!--#include file="info_$arg_id.txt"-->
+```
+
+> 2. Crear la ubicación inicial/fuente (`source`)
+
+```
+location /products {
+	rewrite /products/(.*)/info /product-info.shtml?id=$1 last;
+}
+```
+
+* **NOTA:** No se debe olvidar el modo `last`.
+
+
+
+
 
 
 
