@@ -37,7 +37,7 @@ server {
 	listen 12345;
 
 	location / {
-		auth_basic: "Leyenda | Ruta Protegida";
+		auth_basic "Leyenda | Ruta Protegida";
 		auth_basic_user_file /XYZ/security/credenciales1;
 
 		root /XYZ/www;
