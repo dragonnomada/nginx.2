@@ -291,7 +291,8 @@ location /products {
 Algunas veces vamos a requerir una autenticación básica para
 proteger nuestras rutas y a través de `htpasswd` instalado mediante
 `sudo apt install apache2-utils`. Podemos crear archivos de autenticación
-básica mediante usuario y contraseña.
+básica mediante usuario y contraseña y activarlos sobre nuestras rutas
+para protegerlas.
 
 ## 1. Generar un archivo de credenciales
 
