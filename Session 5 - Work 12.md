@@ -19,6 +19,8 @@ listen.group = ubuntu
 listen.mode = 0660
 ```
 
+	$ sudo systemctl restart php7.4-fpm
+
 ## 3. Crear un archivo de directivas FastCGI
 
 > `/XYZ/conf/php-7.4.conf`
