@@ -171,11 +171,149 @@ Listen 43210
 
 ---
 
+# Sesión 6. Comunicación Proxy entre Nginx y Otros Servidores
+
+Nginx tiene la capacidad de redigir las peticiones hacia otros 
+servidores en otros puertos o en otros dominios.
+
+Mediante la directiva `proxy_pass` podemos redigir una petición,
+enviando incluso Headers personalizados.
+
+> Sintaxis de la directiva `proxy_pass`
+
+```
+location ... {
+	proxy_pass <url>;
+}
+```
+
+Por ejemplo, nosotros tenemos un servidor de Nginx
+usando el puerto `12345`. Y queremos que las peticiones
+se las envie hacia el puerto `54321` (De Nginx a Apache).
+
+> `/XYZ/sites/server_n.conf`
+
+```
+server {
+
+	listen 12345;
+
+	location / {
+		proxy_pass http://localhost:54321;
+	}
+
+}
+```
+
+Cuándo tenemos múltiples servidores podemos enlazarlos en un mismo
+servidor de Nginx en ubicaciones/rutas distintas, por ejemplo,
+para poder administrar proyectos independientes sin mayor complejidad
+o hacer versionamientos.
+
+> `/XYZ/sites/server_n.conf`
+
+```
+server {
+
+	listen 12345;
+
+	location /project1 {
+		proxy_pass http://localhost:54321/;
+	}
+
+	location /project2 {
+		proxy_pass http://localhost:43210/;
+	}
+
+	location /project3 {
+		proxy_pass http://localhost:32109/;
+	}
+
+	location /projectX {
+		proxy_pass http://IP:PORT/;
+	}
+
+	location /projectY {
+		proxy_pass http://DOMAIN/;
+	}
+
+	location /projectZ {
+		proxy_pass http://<url>/v1.2/;
+	}
+
+}
+```
+
+El mayor que se le da la inversión del proxy, es cuándo
+queremos colocar múltiples servidores atendiendo el puerto 80.
+Este puerto es el puerto utilizado por defecto en los navegadores
+y uno de los más solicitados.
+
+Entonces todos los servidores idealmente quisieran estar bajo el puerto
+80. Sin embargo, sólo puede ir uno.
+
+Nginx provee en la capacidad del Reverse Proxy, autodirigir un mismo
+puerto con diferentes nombres de servidor, usando la directiva
+`server_name` y registrando los host en `/atc/hosts`.
+
+Es característica se considera *Dominios Virtuales*.
+
+Entonces podemos administrar un mismo puerto en múltiples
+dominios y subdominios virtuales.
+
+> Sintaxis de la declarativa `server_name`
+
+```
+server_name <domain1> <domain1> ...;
+```
+
+Al definir el Server Name, el servidor ahora podrá
+procesar las peticiones a través del dominio virtual.
+
+> Ejemplo
+
+```
+server {
+
+	listen 80;
+	server_name abs.com;
+
+	... (abs)
+
+}
+```
+
+	$ curl abs.com
+
+	--- ... (abs) ---
+
+> Ejemplo
+
+```
+server {
+
+	listen 80;
+	server_name jvs.com;
+
+	... (jvs)
+
+}
+```
+
+	$ curl jvs.com
+
+	--- ... (jvs) ---
 
 
+* **NOTA:** Esto sólo funciona dentro del mismo ambiente de Nginx.
+Es decir, dos ambientes distintos no pueden usar el mismo puerto.
 
+### Práctica
 
+1. Crear un servidor sobre el puerto 12345 usando 3 dominios distintos
+2. Apuntar cada dominio a otro puerto con `proxy_pass`
 
+* **NOTA:** Registrar los dominios en `/etc/hosts`
 
 
 
