@@ -37,7 +37,7 @@ server {
 
 ## 3. Probar que los recursos se distribuyan correctamente
 
-	$ curl localhost:1234
+	$ curl localhost:12345
 
 
 
