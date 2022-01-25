@@ -14,7 +14,7 @@ upstream apache1 {
 	server localhost:20000 weight=1;
 	server localhost:12101 backup;
 	
-	leat_conn;
+	# least_conn;
 }
 
 ```
