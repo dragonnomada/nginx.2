@@ -244,7 +244,7 @@ server {
 }
 ```
 
-El mayor que se le da la inversión del proxy, es cuándo
+El mayor uso que se le da la inversión del proxy, es cuándo
 queremos colocar múltiples servidores atendiendo el puerto 80.
 Este puerto es el puerto utilizado por defecto en los navegadores
 y uno de los más solicitados.
@@ -252,9 +252,9 @@ y uno de los más solicitados.
 Entonces todos los servidores idealmente quisieran estar bajo el puerto
 80. Sin embargo, sólo puede ir uno.
 
-Nginx provee en la capacidad del Reverse Proxy, autodirigir un mismo
+Nginx provee en la capacidad del Reverse Proxy, para autodirigir un mismo
 puerto con diferentes nombres de servidor, usando la directiva
-`server_name` y registrando los host en `/atc/hosts`.
+`server_name` y registrando los host en `/etc/hosts`.
 
 Es característica se considera *Dominios Virtuales*.
 
