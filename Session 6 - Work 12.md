@@ -33,15 +33,17 @@ Listen 54321
 
 ## 4. Reiniciar el servidor
 
+	$ apachectl configtest
+
 	$ sudo systemctl restart apache2
 
 ## 5. Colocar algunos archivos de muestra
 
 	$ mkdir -p /XYZ/www/apache
 
-	$ echo "Hola Apache" > /XYZ/www/apache/index.html
+	$ echo "Hola Apache XYZ" > /XYZ/www/apache/index.html
 
-	$ echo "Acerca de Apache" > /XYZ/www/apache/about.html
+	$ echo "Acerca de Apache XYZ" > /XYZ/www/apache/about.html
 
 ## 6. Probar los recursos de muestra
 

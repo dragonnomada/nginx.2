@@ -141,6 +141,8 @@ Listen 43210
 
 > Reiniciar el Apache
 
+	$ apachectl configtest	
+
 	$ sudo systemctl restart apache2
 
 > Creamos recursos de muestra
