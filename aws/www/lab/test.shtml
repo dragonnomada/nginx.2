@@ -1,0 +1,17 @@
+<!--#block name="fail"-->
+<h1>FAIL</h1>
+<!--#endblock-->
+
+<!--#block name="success"-->
+<h1>SUCCESS</h1>
+<!--#endblock-->
+
+<h1>Header</h1>
+
+<!--#include file="fail.html" stub="fail"-->
+
+<hr>
+
+<!--#include file="success.html" stub="success"-->
+
+</h1>Footer</h1>

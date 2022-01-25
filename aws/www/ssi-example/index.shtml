@@ -1,0 +1,11 @@
+<h1>Bienvenido</h1>
+
+<!--#include virtual="https://noexiste-123.com"-->
+
+<p>URI: <!--#echo var="request_uri" --></p>
+
+<p>QUERY: <!--#echo var="args" --></p>
+
+<p>QUERY FOO: <!--#echo var="arg_foo" --></p>
+
+<p>QUERY PAGE: <!--#echo var="arg_page" default="0" --></p>

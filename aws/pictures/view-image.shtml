@@ -1,0 +1,16 @@
+<!--
+SSI - Server Side Include (shtml)
+
+#echo - Sustituye por el valor de la variable
+#include - Sustituye por el contenido del archivo
+
+#set
+#block
+#if
+-->
+
+<img src="/img/<!--#echo var='arg_name'-->" 
+	width="<!--#echo var='arg_width' default='200'-->" 
+	height="<!--#echo var='arg_height' default='200'-->"
+>
+

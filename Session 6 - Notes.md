@@ -315,6 +315,198 @@ Es decir, dos ambientes distintos no pueden usar el mismo puerto.
 
 * **NOTA:** Registrar los dominios en `/etc/hosts`
 
+---
+
+# Sesión 6. Balanceo de Carga (Equilibrio de Carga / Load Balancing)
+
+Generalmente las peticiones de los clientes al servidor se dan
+a tráves del protocolo de comunicación TCP y el protocolo de
+transferencia de peticiones HTTP. Podemos nosotros equilibrar
+las peticiones que llegan en estos protocolos con el fin
+de poder distribuirlas a otros servidores automáticamente.
+
+Esto significa que podemos crear grupos/clusters de servidores
+que atiendan las peticiones que han de forma distribuida.
+
+Ejemplo, supongamos que tenemos un servidor backend que procesa
+todas las peticiones sobre un proyecto y queremos ofertar
+alta disponibilidad de este servicio.
+
+Entonces podemos pensar que el mismo backend está ejecutándose
+en múltiples puertos o múltiples servidores y nosotros
+desearíamos poder equilibrar las peticiones entre estos múltiples
+servidores con distintas estrategias de repartición de las peticiones.
+
+Supongamos que queremos atender a 1 millón de usuarios al mismo
+tiempo, pero nuestro backend sólo soporta a 200 mil a la vez.
+Entonces podríamos disponer de 5 instancias del backend en diferentes
+puertos (1) o 5 instancias del backend en diferentes servidores (2).
+
+Siendo así, lo que buscaríamos es distribuir el 1 millón de peticiones
+en cada instancia del backend, para no saturarlos tradicionalmente.
+Muchas veces algunos backend van a estar menos saturados que otros
+y podríamos distribuir las peticiones bajo una estrategia en la que
+las peticiones se vayan al servidor menos ocupado (1). Otras veces
+vamos buscar el servidor con menor tiempo de respuesta al usuario (el más
+cercano), para distribuir las peticiones en una estrategia del 
+más cercano al cliente (2). Otras estrategias de distribución
+más sofisticadas podrían contemplar la ip y la zona geoespacialmente
+para atender usarios regionalizados (3).
+
+En cualquier caso, el sentido será nosotros como servidor Nginx
+equilibrar las peticiones entre las múltiples instancias del
+punto final al que deberían llegar nuestras peticiones.
+
+Con la capacidad de establecer un grupo de servidores, podemos
+entonces usar la directiva `proxy_pass` para enviarle la petición
+al grupo de servidores, en lugar de enviársela a uno solo.
+Esto se conoce como el **Balanceo de carga**. 
+
+Es decir, una petición dirigida a un único servidor (`proxy_pass`), 
+se transforma ahora en una petición dirigida a un grupo de servidores 
+de forma equilibrada, bajo alguna estrategia de baleanceo.
+
+### Modelos cómunes de grupos de servidores
+
+1. **Primario/Secundario**. Tenemos un backend primario
+y un backend secundario, los dos reciben una carga uniforme,
+es decir, algunas se van al primario y otras al secundario.
+Cuándo alguno de los dos servidores falla o no está disponible
+(por manimiento o caída). Las peticiones serán absorbidas por el otro.
+Es útil por ejemplo, cuándo queremos actualizar el servidor secundario
+(aumentaría la carga del primario, pero se mantendría la disponibilidad
+del servicio) y luego podríamos actualizar el primario (aumenta la carga
+del secundario en lo que vuelve a estar disponible el primario, pero
+se mantrendría la disponibilidad del servicio).
+2. **Primario/Secundario/Respaldo**. Funciona similar al anterior
+pero contempla el caso crítico que las actualizaciones fallen
+y se tenga que regresar a una versión del servidor anterior
+a la actualización. Este se conoce como el servidor de Respaldo
+y su objetivo es llevar la versión estable que había funcionado
+hasta el momento. En nuestra estrategia podemos marcar este servidor
+como `backup` para que no reciba ningua petición a menos que
+los otros servidores no estén disponibles.
+3. **N-Primarios/M-Secundarios/K-Respaldos**. Generalizamos
+la activadad común que debería ser de los primarios y secundarios
+y ponemos más respaldos para equilibrar las cargas.
+
+## 1. Configurar un grupo de servidores para distribuir las peticiones
+
+> Sintaxis del bloque `upstream` (`http`)
+
+```
+upstream <group name> {
+	... load balancing rules
+}
+```
+
+> Ejemplo de un grupo de servidores - **Primario/Secundario**
+
+```
+upstream backend1 {
+
+	server localhost:9000 weight=9;
+	server localhost:9001 weight=1;
+
+}
+```
+
+> Ejemplo de un grupo de servidores - **Primario/Secundario**
+
+```
+upstream backend1 {
+
+	server 123.456.789.432:9000 weight=6;
+	server 123.456.789.765:8000 weight=4;
+
+}
+```
+
+> Sintaxis de la rula `upstream > server`
+
+```
+upstream ... {
+
+	server url1 <strategies>;
+	server url2 <strategies>;
+	server url3 <strategies>;
+	...
+	server urlN <strategies>;
+
+}
+```
+
+> Ejemplo de un grupo de servidores - **Primario/Secundario/Respaldo**
+
+```
+upstream backend1 {
+
+	server localhost:9000 weight=9;
+	server localhost:9001 weight=1;
+	server localhost:9100 backup;
+
+}
+```
+
+### Tabla de Estrategias/Parámetros de Balanceo de Carga
+
+Parámetro | Descripción
+--- | ---
+`weight=<n>` | Ajusta el peso del servidor agrupado para recibir <n> peticiones del total
+`max_conns=<max>` | Ajusta el máximo número de conexiones soportadas por el servidor para no saturarlo.
+`max_fails=<max>` | Máximo número de intentos para comunicarse.
+`fail_timeout=<time>` | Máximo tiempo de respuesta.
+`backup` | Es un servidor que no recibirá peticiones al menos que los otros no estén disponibles.
+`down` | Temporalmente no disponible (no recibe peticiones).
+
+### Tabla Reglas adicionales
+
+Directiva | Descripción
+--- | ---
+`least_conn` | El servidor con menos conexiones
+`least_time header/last_byte` | El servidor con menor tiempo de respuesta
+`queue <num> [time]` | Cada tantas conexiones esperan cierto tiempo para darles un servidor.
+`random two <least_conn/least_time>` | Busca dos servidores y aplica la estrategia.
+
+## 2. Crear un grupo de servidores que atiendan las peticiones
+
+```
+upstream backend {
+
+	server localhost:16500 weight=2 down;
+	server localhost:14500 weight=3;
+	server localhost:15001 weight=2;
+	server localhost:13500 weight=1;
+	server localhost:12101 backup;
+	
+	leat_conn;
+}
+
+server {
+
+	listen 10350;
+
+	location / {
+		proxy_pass http://backend/;
+	}
+
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,5 @@
+<h1>Cerficado <!--#echo var="arg_id"--></h1>
+
+<hr>
+
+<!--#include file="cert_$arg_id.txt"-->

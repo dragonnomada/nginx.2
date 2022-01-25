@@ -1,0 +1,9 @@
+<meta charset="utf-8">
+
+<h1>Información del Producto</h1>
+
+<p>ID: <!--#echo var="arg_id"--></p>
+
+<pre>
+<!--#include file="info_$arg_id.txt"-->
+</pre>

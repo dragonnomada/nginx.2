@@ -1,0 +1,5 @@
+Nombre: Coca Cola
+Precio: $18.5
+Descripción:
+Es un refresco negro que hace daño
+Picture: https://coca-cola/img/logo.png
